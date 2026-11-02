@@ -1,0 +1,52 @@
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1		      localhost
+255.255.255.255		broadcasthost
+::1               localhost
+# Added by Docker Desktop
+# To allow the same kube context to work on the host and the container:
+127.0.0.1  kubernetes.docker.internal
+
+# TOL_TOLDOCSWEB
+127.0.0.1  toldocs.com
+127.0.0.1  tolindices.com
+# TOL_GRAILS
+127.0.0.1  tase.tirantlocal.com tol.tirantlocal.com tnr.tirantlocal.com notarios.tirantlocal.com tph.tirantlocal.com tolmex.tirantlocal.com latam.tirantlocal.com analytics.tirantlocal.com cyl.tirantlocal.com icab.tirantlocal.com boa.tirantlocal.com boc.tirantlocal.com conmex.tirantlocal.com cgae.tirantlocal.com
+# TOL_LATAM
+127.0.0.1  trinidadtobago.tirantlocal.net palestra.tirantlocal.com peru.tirantlocal.net portugal.tirantlocal.com tirantlocal.com.br tirantlocal.net.br tirantlocal.com.co tirantlocal.cl tirantlocal.cr jamaica.tirantlocal.net tirantlocal.com.pe slv.tirantlocal.com
+# REFERER
+127.0.0.1 tirantonline.com
+# PRE
+# 172.21.10.105 www.tirantonline.com.mx
+# 172.21.10.105 contadores.tirantonline.com.mx
+# 172.21.10.147 lucanor.tirant.com.co
+# 212.101.77.153 notariado.tirant.com
+# 212.101.77.157 propiedadhorizontal.tirant.com
+## MINIO
+127.0.0.1  host.docker.internal
+localhost  host.docker.internal
+## LOCAL DEV
+127.0.0.1 tol-local.tirantonline.com
+127.0.0.1 tolmex-local.tirantonline.com
+127.0.0.1 conmex-local.tirantonline.com
+127.0.0.1 tase-local.tirantonline.com
+127.0.0.1 tnr-local.tirantonline.com
+127.0.0.1 tph-local.tirantonline.com
+127.0.0.1 chl-local.tirantonline.com
+127.0.0.1 col-local.tirantonline.com
+127.0.0.1 cri-local.tirantonline.com
+127.0.0.1 latam-local.tirantonline.com
+127.0.0.1 per-local.tirantonline.com
+127.0.0.1 ecu-local.tirantonline.com
+127.0.0.1 slv-local.tirantonline.com
+127.0.0.1 analytics-local.tirantonline.com
+127.0.0.1 cyl-local.tirantonline.com
+127.0.0.1 icab-local.tirantonline.com
+127.0.0.1 boa-local.tirantonline.com
+127.0.0.1 boc-local.tirantonline.com
+127.0.0.1 cgae-local.tirantonline.com
+127.0.0.1 usuarios-local.tirantonline.com

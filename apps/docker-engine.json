@@ -1,0 +1,19 @@
+{
+  "bip": "172.31.0.1/16",
+  "builder": {
+    "gc": {
+      "defaultKeepStorage": "20GB",
+      "enabled": true
+    }
+  },
+  "default-address-pools": [
+    {
+      "base": "172.30.0.0/16",
+      "size": 24
+    }
+  ],
+  "experimental": false,
+  "features": {
+    "buildkit": true
+  }
+}

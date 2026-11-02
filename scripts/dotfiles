@@ -1,0 +1,146 @@
+#!/bin/bash
+
+set -eu
+
+usage() {
+    cat <<'EOF'
+Usage: dotfiles (--add | --del) --zsh FILE
+
+  --add   Move FILE into the repository's zsh/ directory and link it.
+          Existing symlinks are left unchanged. If the repository file
+          exists, back up any local file before linking.
+  --del   Remove the managed link and restore the repository file.
+  --help  Show this help.
+EOF
+}
+
+fail() {
+    printf 'Error: %s\n' "$*" >&2
+    exit 1
+}
+
+action=
+group=
+config=
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --add|--del)
+            [ -z "$action" ] || fail "Specify exactly one of --add and --del."
+            action=$1
+            ;;
+        --zsh)
+            [ -z "$group" ] || fail "Specify --zsh only once."
+            group=zsh
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            [ "$#" -eq 1 ] || fail "Specify exactly one file."
+            [ -z "$config" ] || fail "Specify exactly one file."
+            config=$1
+            break
+            ;;
+        -*)
+            fail "Unknown option: $1"
+            ;;
+        *)
+            [ -z "$config" ] || fail "Specify exactly one file."
+            config=$1
+            ;;
+    esac
+    shift
+done
+
+[ -n "$action" ] && [ -n "$group" ] && [ -n "$config" ] || {
+    usage >&2
+    exit 1
+}
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd -P)
+
+case "$config" in
+    */) fail "FILE must be a file path, not a trailing-slash path." ;;
+    /*) ;;
+    *) config="$PWD/$config" ;;
+esac
+name=$(basename -- "$config")
+case "$name" in
+    .|..) fail "FILE must name a regular file." ;;
+esac
+parent=$(CDPATH= cd -- "$(dirname -- "$config")" && pwd -P) ||
+    fail "The configuration's parent directory must exist."
+config="$parent/$name"
+
+case "$config" in
+    "$repo_root"|"$repo_root"/*)
+        fail "The configuration path must be outside the repository."
+        ;;
+esac
+
+if [ "$action" = --add ] && [ -L "$config" ]; then
+    printf 'Warning: %s is already a symbolic link; nothing changed.\n' "$config" >&2
+    exit 0
+fi
+
+repo_dir="$repo_root/$group"
+repo_file="$repo_dir/$name"
+[ ! -L "$repo_dir" ] || fail "The repository group directory must not be a symbolic link."
+if [ -e "$repo_dir" ] && [ ! -d "$repo_dir" ]; then
+    fail "The repository group path is not a directory: $repo_dir"
+fi
+[ ! -L "$repo_file" ] || fail "The repository file must not be a symbolic link."
+if [ -e "$repo_file" ] && [ ! -f "$repo_file" ]; then
+    fail "The repository path is not a regular file: $repo_file"
+fi
+
+if [ "$action" = --add ]; then
+    if [ -e "$config" ] && [ ! -f "$config" ]; then
+        fail "The configuration is not a regular file: $config"
+    fi
+    if [ ! -f "$repo_file" ] && [ ! -f "$config" ]; then
+        fail "Neither the local file nor the repository file exists."
+    fi
+    mkdir -p -- "$repo_dir"
+    original=
+    if [ -f "$repo_file" ]; then
+        if [ -f "$config" ]; then
+            original=$(mktemp "$config.dotfiles-backup.XXXXXX")
+            mv -- "$config" "$original"
+            printf 'Backup: %s\n' "$original"
+        fi
+    else
+        mv -- "$config" "$repo_file"
+        original=$repo_file
+    fi
+    if ! ln -s -- "$repo_file" "$config"; then
+        if [ -n "$original" ] && [ ! -e "$config" ] && [ ! -L "$config" ]; then
+            mv -- "$original" "$config" ||
+                fail "Link creation failed; restore the original from $original."
+        fi
+        fail "Could not create the symbolic link: $config"
+    fi
+    printf 'Linked: %s -> %s\n' "$config" "$repo_file"
+else
+    [ -L "$config" ] || fail "The configuration path is not a symbolic link: $config"
+    [ -f "$repo_file" ] || fail "The repository file does not exist: $repo_file"
+    target=$(readlink "$config")
+    case "$target" in
+        /*) ;;
+        *) target="$parent/$target" ;;
+    esac
+    target_parent=$(CDPATH= cd -- "$(dirname -- "$target")" && pwd -P) ||
+        fail "The symbolic link's target directory does not exist."
+    [ "$target_parent/$(basename -- "$target")" = "$repo_file" ] ||
+        fail "The symbolic link does not point to $repo_file; nothing changed."
+    unlink "$config"
+    if ! mv -- "$repo_file" "$config"; then
+        ln -s -- "$repo_file" "$config" ||
+            fail "Restoration failed; recreate the link from $config to $repo_file."
+        fail "Could not restore the file; the symbolic link has been recreated."
+    fi
+    printf 'Restored: %s\n' "$config"
+fi

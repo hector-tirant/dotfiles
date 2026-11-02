@@ -1,0 +1,148 @@
+#aliases
+
+# Navigation shortcuts
+alias ..="cd .."
+alias ...="cd ../.."
+alias ll="ls -la"
+alias zz="source ~/.zshrc"
+
+# MongoDB shortcuts
+alias mongos="ulimit -n 10000 && sudo mongod --config /usr/local/etc/mongod.conf --fork"
+alias mongo_start="brew services start mongodb/brew/mongodb-community"
+alias mongo_stop="brew services stop mongodb/brew/mongodb-community"
+
+# VPN shortcuts
+alias cisco='open -a "Cisco Secure Client"'
+alias ciscokill='pkill -x "Cisco Secure Client"'
+alias vpnc="cd /Users/hectorgb/workspaces/personal/vpn_scripts && sudo ./vpn_tirant -c hectorgb@tirant XKZAntQ9TtVm && cisco"
+alias vpnd="cd /Users/hectorgb/workspaces/personal/vpn_scripts && sudo ./vpn_tirant -d && ciscokill"
+alias vpns="cd /Users/hectorgb/workspaces/personal/vpn_scripts && sudo ./vpn_tirant -s"
+alias vpnr="vpnd && vpnc"
+
+# Work shortcuts
+alias sesame="cd /Users/hectorgb/workspaces/personal/autosesame && python3 autocheck.py -m 10"
+alias start="depende && vpnr && sesame"
+alias rubo='docker compose exec app bundle exec rubocop $(git diff --name-only origin/master...HEAD --diff-filter=AM | grep "\.rb$")'
+function ruboapi() {
+    docker compose exec app bundle exec rubocop $(git diff --name-only origin/master...HEAD --diff-filter=AM | grep "\.rb$" | sed 's|^[^/]*/||' | xargs -I {} sh -c 'test -f "{}" && echo "{}"')
+}
+
+# Git shortcuts
+alias g="git"
+alias gs="git status"
+alias gco="git checkout"
+alias gl="git log"
+alias gb="git branch"
+alias gp="git push"
+# remove branches
+alias gd="git branch -D"
+alias gbdel="git branch | sed '1!d' | xargs -I {} git branch -D {}"
+function gbdn() {
+    local branch_to_delete=$(git branch | sed "${1}!d" | xargs)
+    git branch -D $branch_to_delete
+}
+
+#OPENSHIFT
+alias oc-login-vlc="oc login https://api.ocp-vlc.tirant.net:6443 --username=tirant --password=trnt,47"
+alias oc-login-cnt="oc login https://api.ocp-cnt.tirant.net:6443 --username=tirant --password=trnt,47"
+alias oc-projects='oc project $(oc get projects -o custom-columns=PROJECT:.metadata.name | fzf)'
+alias oc-shell='oc rsh $(oc get pods -o custom-columns=POD:.metadata.name | fzf)'
+alias oc-logs='oc logs -f $(oc get pods -o custom-columns=POD:.metadata.name | fzf)'
+
+#fronts
+alias tolweb="cd /Users/hectorgb/workspaces/tirant/tolweb && make serve"
+alias usersweb="cd /Users/hectorgb/workspaces/tirant/toluserweb && make serve"
+alias docsweb="cd /Users/hectorgb/workspaces/tirant/toldocumentweb && make serve"
+#apis
+# alias userapi="cd /Users/hectorgb/workspaces/tirant/toluserapi/api && bundle install && rails s -p 3001"
+alias userapi="cd /Users/hectorgb/workspaces/tirant/toluserapi/api && make serve"
+# alias docapi="cd /Users/hectorgb/workspaces/tirant/api/apitol && bundle install && rails s -p 3002"
+alias docapi="cd /Users/hectorgb/workspaces/tirant/api/apitol && make serve"
+alias mobapi="cd /Users/hectorgb/workspaces/tirant/tolmobileapi && make serve"
+alias tapi="cd /Users/hectorgb/workspaces/tirant/tirant-api && make serve"
+alias concepts="cd /Users/hectorgb/workspaces/tirant/concepts_i18n && make up && make serve"
+#libraries
+alias sofia="cd /Users/hectorgb/workspaces/tirant/sofia-service && make serve"
+alias cloud="cd /Users/hectorgb/workspaces/tirant/tirant-cloud-service && make up && docker compose attach cloud-service"
+alias jsofia="cd /Users/hectorgb/workspaces/tirant/sofia-js && make compile && make copy_sofia && make up"
+alias jcloud="cd /Users/hectorgb/workspaces/tirant/tirant-cloud-js && make up"
+alias conversa="cd /Users/hectorgb/workspaces/tirant/conversa-js && make serve"
+alias grok="ngrok http 3003"
+#tools
+alias redis="cd /Users/hectorgb/workspaces/tirant/toluserapi/api && redis-server"
+alias sk="bundle exec sidekiq -C config/sidekiq.yml"
+alias sk-usr="cd /Users/hectorgb/workspaces/tirant/toluserapi/api && make sidekiq"
+alias sk-doc="cd /Users/hectorgb/workspaces/tirant/api/apitol && make sidekiq"
+alias estaticas="cd /Users/hectorgb/workspaces/tirant/estaticas && make up"
+alias depende="cd /Users/hectorgb/workspaces/tirant/tol_dependencies && make up"
+alias matomo="cd /Users/hectorgb/workspaces/tirant/matomo && make serve"
+alias mkdocs="cd /Users/hectorgb/workspaces/tirant/mkdocs-handbook && make serve"
+
+#grails
+# alias tol-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/tol && sdk use grails 2.3.11 && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops tol) run-app"
+# alias tolmex-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/tolmex && sdk use grails 2.3.11 && grails clean && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops tolmex) run-app"
+# alias latam-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/latam && sdk use grails 2.3.11 && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops latam) run-app"
+# alias tase-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/tase && sdk use grails 2.3.11 && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops tase) run-app"
+# alias tph-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/tph && sdk use grails 2.3.11 && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops tph) run-app"
+# alias tnr-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/notarios && sdk use grails 2.3.11 && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops notarios) run-app"
+# alias notarios-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/notarios && sdk use grails 2.3.11 && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops notarios) run-app"
+# alias cyl-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/cyl && sdk use grails 2.3.11 && grails run-app"
+# alias icab-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/icab && sdk use grails 2.3.11 && grails run-app"
+# alias analytics-gr="cd /Users/hectorgb/workspaces/tirant/tirantonline/analytics && sdk use grails 2.3.11 && grails $(/Users/hectorgb/workspaces/tirant/tirantonline/bin/sysprops analytics) run-app"
+# alias nx="cd /Users/hectorgb/workspaces/tirant/tol_dependencies && sudo nginx -p . -c nginx.conf"
+
+#toldocs
+alias flexind="cd /Users/hectorgb/Flex && ./flex.sh tol_tolindices"
+alias flexdoc="cd /Users/hectorgb/Flex && ./flex.sh tol_toldocs"
+
+#docker
+alias drm='docker rm -f $(docker ps -a -q) && docker network prune -f'
+alias ddu='docker-compose down && docker-compose up -d'
+
+#flutter
+alias sdkman='/Users/hectorgb/workspaces/flutter/cmdline-tools/latest/bin/sdkmanager'
+
+#dev start
+alias dev-tol='osascript \
+  -e '"'"'tell application "Terminal" to activate'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "gtol" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "tolweb" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "docapi" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "userapi" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "nx" & return'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "2014" & return'"'"''
+  alias dev-mex='osascript \
+  -e '"'"'tell application "Terminal" to activate'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "gtolmex" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "tolweb" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "docapi" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "userapi" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "nx" & return'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "2014" & return'"'"''
+alias dev-lat='osascript \
+  -e '"'"'tell application "Terminal" to activate'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "glatam" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "tolweb" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "docapi" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "userapi" & return'"'"' \
+  -e '"'"'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "nx" & return'"'"' \
+  -e '"'"'tell application "System Events" to keystroke "2014" & return'"'"''
+
+killwt() {
+  ps aux | grep "\[$1\]" | awk '{print $2}' | { read pid && kill -9 $pid; }
+}
